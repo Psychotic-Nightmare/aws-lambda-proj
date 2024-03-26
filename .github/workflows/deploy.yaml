@@ -1,0 +1,29 @@
+name: Deploy Lambda Function
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+
+      - name: Install dependencies
+        run: |
+          pip install boto3
+          # Install any other dependencies if needed
+
+      - name: Deploy Lambda function
+        run: |
+          cd s3 
+          zip -r function.zip lambda_function.py  # Create deployment package
+          aws lambda update-function-code --function-name test_function --zip-file fileb://function.zip

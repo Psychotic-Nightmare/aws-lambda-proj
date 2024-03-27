@@ -29,8 +29,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Deploy Lambda function
+      - name: List files in s3 directory
         run: |
-          cd s3 
+          cd s3
+          ls -la
           zip -r function.zip upload_alert.py  # Create deployment package
           aws lambda update-function-code --function-name upload_alerts --zip-file fileb://function.zip

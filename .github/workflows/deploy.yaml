@@ -5,13 +5,16 @@ on:
     branches:
       - main
 
+env:
+  LAMBDA_NAME: your_lambda_function_name
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -27,10 +30,17 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1 
+          aws-region: us-east-1
 
       - name: Deploy Lambda function
         run: |
-          cd s3 
-          zip -r function.zip lambda_function.py  # Create deployment package
-          aws lambda update-function-code --function-name test_function --zip-file fileb://function.zip
+          FUNCTION_NAME=${{ env.LAMBDA_NAME }}
+          FUNCTION_EXISTS=$(aws lambda get-function --function-name $FUNCTION_NAME || echo "not_exists")
+          if [ "$FUNCTION_EXISTS" == "not_exists" ]
+          then
+            echo "Function does not exist, creating..."
+            # Add your AWS Lambda function creation command here
+          else
+            echo "Function exists, updating..."
+            aws lambda update-function-code --function-name $FUNCTION_NAME --zip-file fileb://function.zip
+          fi

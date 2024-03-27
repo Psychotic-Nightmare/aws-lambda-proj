@@ -4,6 +4,7 @@ import json
 
 def lambda_handler(event, context):
     s3 = boto3.client('s3')
+    sns = boto3.client('sns')
 
     # Get bucket name and file key from the event
     bucket = event['Records'][0]['s3']['bucket']['name']
@@ -15,6 +16,13 @@ def lambda_handler(event, context):
         'Key': key,
         'Message': 'An image has been uploaded to your bucket'
     }
+
+    # Publish the cleaner response to the SNS topic
+    sns.publish(
+        # replace with your SNS topic ARN
+        TopicArn='arn:aws:sns:us-east-1:317327656978:upload_alert',
+        Message=json.dumps(response)
+    )
 
     return {
         'statusCode': 200,

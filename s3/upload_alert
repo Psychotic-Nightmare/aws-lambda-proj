@@ -9,7 +9,14 @@ def lambda_handler(event, context):
     bucket = event['Records'][0]['s3']['bucket']['name']
     key = event['Records'][0]['s3']['object']['key']
 
+    # Create a cleaner response
+    response = {
+        'Bucket': bucket,
+        'Key': key,
+        'Message': 'An image has been uploaded to your bucket'
+    }
+
     return {
         'statusCode': 200,
-        'body': json.dumps('An image has been uploaded to your bucket')
+        'body': json.dumps(response)
     }

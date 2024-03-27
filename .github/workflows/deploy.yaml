@@ -32,6 +32,5 @@ jobs:
       - name: List files in s3 directory
         run: |
           cd s3
-          ls -la
-          zip -r function.zip upload_alert.py  # Create deployment package
+          zip -r function.zip upload_alert  # Create deployment package
           aws lambda update-function-code --function-name upload_alerts --zip-file fileb://function.zip

@@ -5,9 +5,6 @@ on:
     branches:
       - main
 
-env:
-  LAMBDA_NAME: your_lambda_function_name
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -34,13 +31,6 @@ jobs:
 
       - name: Deploy Lambda function
         run: |
-          FUNCTION_NAME=${{ env.LAMBDA_NAME }}
-          FUNCTION_EXISTS=$(aws lambda get-function --function-name $FUNCTION_NAME || echo "not_exists")
-          if [ "$FUNCTION_EXISTS" == "not_exists" ]
-          then
-            echo "Function does not exist, creating..."
-            # Add your AWS Lambda function creation command here
-          else
-            echo "Function exists, updating..."
-            aws lambda update-function-code --function-name $FUNCTION_NAME --zip-file fileb://function.zip
-          fi
+          cd s3 
+          zip -r function.zip upload_alert.py  # Create deployment package
+          aws lambda update-function-code --function-name upload_alerts --zip-file fileb://function.zip
